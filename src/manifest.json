@@ -1,6 +1,6 @@
 {
-  "name": "Ionic",
-  "short_name": "Ionic",
+  "name": "Controlador Casa",
+  "short_name": "ControladorCasa",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{
