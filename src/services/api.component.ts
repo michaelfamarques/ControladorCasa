@@ -1,10 +1,10 @@
-//import { Component } from '@angular/core';
-import { Hotspot, HotspotNetwork } from '@ionic-native/hotspot';
-import { Headers, Http } from '@angular/http';
+import { Injectable } from '@angular/core';
+import { Hotspot } from '@ionic-native/hotspot';
+import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import CONFIG from '../config.json';
 
-//@Component({})
+@Injectable()
 export class Api {
     constructor(private hotspot: Hotspot, private http: Http) {}
 

@@ -6,11 +6,14 @@ import { ToastController } from 'ionic-angular';
 
 @Component({
     selector: 'page-home',
-    templateUrl: 'home.html'
+    templateUrl: 'home.html',
+    providers: [Api]
 })
 export class HomePage {
     constructor(public navCtrl: NavController, private api:Api, public alertCtrl: AlertController, public toastCtrl: ToastController) {}
     comando(comando:string): void{
+        //@TODO adicionar https://github.com/apache/cordova-plugin-network-information
+        //@TODO adicionar https://github.com/hoerresb/WifiWizard
         this.api[comando]().then((res) => {
             let msgToast;
             if(res){
