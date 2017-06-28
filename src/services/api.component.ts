@@ -19,7 +19,7 @@ export class Api {
                     resolve(CONFIG.API_EXTERNA);
                 });
             }else{
-                reject(new Error("Celular não possui acesso a internet!"));
+                reject(new Error("Celular não possui acesso a internet! Tipo retornado: "+connType));
             }
         });
     }
