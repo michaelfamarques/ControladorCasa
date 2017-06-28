@@ -1,42 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Hotspot } from '@ionic-native/hotspot';
+import { Network } from '@ionic-native/network';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import CONFIG from '../config.json';
 
 @Injectable()
 export class Api {
-    constructor(private hotspot: Hotspot, private http: Http) {}
-
+    constructor(private network: Network, private http: Http) {}
     private getApiUrl():Promise<string>{
         return new Promise((resolve, reject) => {
-            this.hotspot.isConnectedToInternet().then((isConnected) => {
-                if(!isConnected){
-                    reject(new Error("Celular não possui acesso a internet!"));
-                }else{
-                    this.hotspot.isConnectedToInternetViaWifi().then((isWifi) => {
-                        if(!isWifi){
-                            resolve(CONFIG.API_EXTERNA);
-                        }else{
-                            this.hotspot.getConnectionInfo().then((info) => {
-                                if(info.SSID == CONFIG.SSID){
-                                    resolve(CONFIG.API_INTERNA);
-                                }else{
-                                    resolve(CONFIG.API_EXTERNA);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
+            var connType = this.network.type;
+            if(connType == "2g" || connType == "3g" || connType == "4g" || connType == "cellular" ){
+                resolve(CONFIG.API_EXTERNA);
+            }else if(connType == "wifi"){
+                this.ping().then((res) => {
+                    resolve(CONFIG.API_INTERNA);
+                }).catch((err) => {
+                    resolve(CONFIG.API_EXTERNA);
+                });
+            }else{
+                reject(new Error("Celular não possui acesso a internet!"));
+            }
         });
+    }
+
+    private ping():Promise<boolean>{
+        var url = CONFIG.API_INTERNA + "ping";
+        return this.http.get(url).toPromise()
+            .then(response => response.json() as boolean)
     }
 
     public ligarNotebook():Promise<boolean>{
         return this.getApiUrl().then((url) => {
             url += "ligarNote";
             return this.http.get(url).toPromise()
-            .then(response => response.json().data as boolean)
+            .then(response => response.json() as boolean)
         });
     }
 
@@ -44,7 +42,7 @@ export class Api {
         return this.getApiUrl().then((url) => {
             url += "desligarNote";
             return this.http.get(url).toPromise()
-            .then(response => response.json().data as boolean)
+            .then(response => response.json() as boolean)
         });
     }
 
